@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>573</width>
-    <height>339</height>
+    <width>912</width>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>310</y>
+     <y>530</y>
      <width>331</width>
      <height>17</height>
     </rect>
@@ -43,7 +43,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>310</y>
+     <y>530</y>
      <width>64</width>
      <height>27</height>
     </rect>
@@ -176,6 +176,32 @@
    <property name="text">
     <string>OJO: No todos los campos JSON son interpretados por el código de partida en el microcontrolador</string>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>280</y>
+     <width>441</width>
+     <height>131</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>PING</string>
+   </property>
+   <widget class="QPushButton" name="pingButton">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>50</y>
+      <width>101</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ping</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

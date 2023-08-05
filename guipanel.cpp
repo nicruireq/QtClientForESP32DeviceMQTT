@@ -13,6 +13,7 @@
 #include<stdint.h>      // Cabecera para usar tipos de enteros con tamaño
 #include<stdbool.h>     // Cabecera para usar booleanos
 
+#include "topic.h"
 
 GUIPanel::GUIPanel(QWidget *parent) :  // Constructor de la clase
     QWidget(parent),
@@ -103,6 +104,15 @@ void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
             QJsonValue entrada2=objeto_json["greenLed"]; //Obtengo la entrada orangeLed. Esto lo puedo hacer porque el operador [] está sobrecargado
             QJsonValue entrada3=objeto_json["blueLed"]; //Obtengo la entrada greenLed. Esto lo puedo hacer porque el operador [] está sobrecargado
 
+            // obtener respuesta en topic COMMAND
+            QJsonValue cmdResponse = objeto_json["cmd"];
+            if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[PING_RESPONSE])
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Received ping response from board!!!");
+                msgBox.setWindowTitle("PING response");
+                msgBox.exec();
+            }
 
             if (entrada.isBool())
             {   //Compruebo que es booleano...
@@ -183,6 +193,10 @@ void GUIPanel::onMQTT_Connected()
     connected=true;
 
     _client->subscribe(topic,0); //Se suscribe al mismo topic en el que publica...
+
+    // suscribir a topic para enviar comandos a la placa
+    _client->subscribe(topics[COMMAND],0);
+
 }
 
 
@@ -254,3 +268,15 @@ void GUIPanel::on_pushButton_3_toggled(bool checked)
     }
     SendMessage();
 }
+
+void GUIPanel::on_pingButton_clicked()
+{
+    QJsonObject pingCmd;
+    pingCmd["cmd"] = topicCommandCmds[PING];
+    QJsonDocument payload(pingCmd);
+    QMQTT::Message msg(0, topics[COMMAND], payload.toJson());
+
+    //Publica el mensaje
+    _client->publish(msg);
+}
+

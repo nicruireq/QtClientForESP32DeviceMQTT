@@ -37,6 +37,8 @@ private slots:
 
     void on_pushButton_3_toggled(bool checked);
 
+    void on_pingButton_clicked();
+
 private: // funciones privadas
 //    void pingDevice();
     void startClient();

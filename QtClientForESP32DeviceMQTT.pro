@@ -13,7 +13,8 @@ SOURCES += \
     guipanel.cpp
 
 HEADERS += \
-    guipanel.h
+    guipanel.h \
+    topic.h
 
 FORMS += \
     guipanel.ui
