@@ -6,13 +6,15 @@
 using namespace std;
 
 enum TopicName {
-    COMMAND
+    COMMAND,
+    LED
 };
 
 const QString BASE = "/mseei/imicro/nrr/";
 
 const QString topics[] = {
-  BASE + "COMMAND"
+    BASE + "COMMAND",
+    BASE + "LED"
 };
 
 enum Commands {

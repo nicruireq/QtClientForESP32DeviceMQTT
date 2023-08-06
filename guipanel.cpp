@@ -118,58 +118,58 @@ void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
             {   //Compruebo que es booleano...
 
                 checked=entrada.toBool(); //Leo el valor de objeto (si fuese entero usaria toInt(), toDouble() si es doble....
-                previousblockinstate=ui->pushButton_2->blockSignals(true);   //Esto es para evitar que el cambio de valor
+                previousblockinstate=ui->gpioRedButton->blockSignals(true);   //Esto es para evitar que el cambio de valor
                                                                      //provoque otro envio al topic por el que he recibido
 
-                ui->pushButton_2->setChecked(checked);
+                ui->gpioRedButton->setChecked(checked);
                 if (checked)
                 {
-                    ui->pushButton_2->setText("Apaga");
+                    ui->gpioRedButton->setText("Apaga");
 
                 }
                 else
                 {
-                    ui->pushButton_2->setText("Enciende");
+                    ui->gpioRedButton->setText("Enciende");
                 }
-                ui->pushButton_2->blockSignals(previousblockinstate);
+                ui->gpioRedButton->blockSignals(previousblockinstate);
             }            
             if (entrada2.isBool())
             {   //Compruebo que es booleano...
 
                 checked=entrada2.toBool(); //Leo el valor de objeto (si fuese entero usaria toInt(), toDouble() si es doble....
-                previousblockinstate=ui->pushButton_3->blockSignals(true);   //Esto es para evitar que el cambio de valor
+                previousblockinstate=ui->gpioGreenButton->blockSignals(true);   //Esto es para evitar que el cambio de valor
                                                                      //provoque otro envio al topic por el que he recibido
 
-                ui->pushButton_3->setChecked(checked);
+                ui->gpioGreenButton->setChecked(checked);
                 if (checked)
                 {
-                    ui->pushButton_3->setText("Apaga");
+                    ui->gpioGreenButton->setText("Apaga");
 
                 }
                 else
                 {
-                    ui->pushButton_3->setText("Enciende");
+                    ui->gpioGreenButton->setText("Enciende");
                 }
-                ui->pushButton_3->blockSignals(previousblockinstate);
+                ui->gpioGreenButton->blockSignals(previousblockinstate);
             }
             if (entrada3.isBool())
             {   //Compruebo que es booleano...
 
                 checked=entrada3.toBool(); //Leo el valor de objeto (si fuese entero usaria toInt(), toDouble() si es doble....
-                previousblockinstate=ui->pushButton_4->blockSignals(true);   //Esto es para evitar que el cambio de valor
+                previousblockinstate=ui->gpioBlueButton->blockSignals(true);   //Esto es para evitar que el cambio de valor
                                                                      //provoque otro envio al topic por el que he recibido
 
-                ui->pushButton_4->setChecked(checked);
+                ui->gpioBlueButton->setChecked(checked);
                 if (checked)
                 {
-                    ui->pushButton_4->setText("Apaga");
+                    ui->gpioBlueButton->setText("Apaga");
 
                 }
                 else
                 {
-                    ui->pushButton_4->setText("Enciende");
+                    ui->gpioBlueButton->setText("Enciende");
                 }
-                ui->pushButton_4->blockSignals(previousblockinstate);
+                ui->gpioBlueButton->blockSignals(previousblockinstate);
             }
         }
 
@@ -183,8 +183,6 @@ void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
  -----------------------------------------------------------*/
 void GUIPanel::onMQTT_Connected()
 {
-    QString topic(ui->topic->text());
-
     ui->runButton->setEnabled(false);
 
     // Se indica que se ha realizado la conexión en la etiqueta 'statusLabel'
@@ -192,82 +190,32 @@ void GUIPanel::onMQTT_Connected()
 
     connected=true;
 
-    _client->subscribe(topic,0); //Se suscribe al mismo topic en el que publica...
-
     // suscribir a topic para enviar comandos a la placa
     _client->subscribe(topics[COMMAND],0);
-
+    _client->subscribe(topics[LED],0);
 }
 
 
 
-void GUIPanel::SendMessage()
+void GUIPanel::SendMessageForGpioRGBLeds()
 {
-
-    QByteArray cadena;
-
-
     QJsonObject objeto_json;
     //Añade un campo "redLed" al objeto JSON, con el valor (true o false) contenido en checked
-    objeto_json["redLed"]=ui->pushButton_2->isChecked(); //Puedo hacer ["redLed"] porque el operador [] está sobrecargado.
+    objeto_json["redLed"]=ui->gpioRedButton->isChecked(); //Puedo hacer ["redLed"] porque el operador [] está sobrecargado.
     //Añade un campo "orangeLed" al objeto JSON, con el valor (true o false) contenido en checked
-    objeto_json["greenLed"]=ui->pushButton_3->isChecked(); //Puedo hacer ["orangeLed"] porque el operador [] está sobrecargado.
+    objeto_json["greenLed"]=ui->gpioGreenButton->isChecked(); //Puedo hacer ["orangeLed"] porque el operador [] está sobrecargado.
     //Añade un campo "greenLed" al objeto JSON, con el valor (true o false) contenido en checked
-    objeto_json["blueLed"]=ui->pushButton_4->isChecked();
+    objeto_json["blueLed"]=ui->gpioBlueButton->isChecked();
 
     QJsonDocument mensaje(objeto_json); //crea un objeto de tivo QJsonDocument conteniendo el objeto objeto_json (necesario para obtener el mensaje formateado en JSON)
 
-    QMQTT::Message msg(0, ui->topic->text(), mensaje.toJson()); //Crea el mensaje MQTT contieniendo el mensaje en formato JSON
+    QMQTT::Message msg(0, topics[LED], mensaje.toJson()); //Crea el mensaje MQTT contieniendo el mensaje en formato JSON
 
     //Publica el mensaje
     _client->publish(msg);
 
 }
 
-void GUIPanel::on_pushButton_2_toggled(bool checked)
-{
-    //Rojo
-    if (checked)
-    {
-        ui->pushButton_2->setText("Apaga");
-
-    }
-    else
-    {
-        ui->pushButton_2->setText("Enciende");
-    }
-    SendMessage();
-}
-
-void GUIPanel::on_pushButton_4_toggled(bool checked)
-{
-    //Verde
-    if (checked)
-    {
-        ui->pushButton_4->setText("Apaga");
-
-    }
-    else
-    {
-        ui->pushButton_4->setText("Enciende");
-    }
-    SendMessage();
-}
-
-void GUIPanel::on_pushButton_3_toggled(bool checked)
-{
-    //Orange
-    if (checked)
-    {
-        ui->pushButton_3->setText("Apaga");
-
-    }
-    else
-    {
-        ui->pushButton_3->setText("Enciende");
-    }
-    SendMessage();
-}
 
 void GUIPanel::on_pingButton_clicked()
 {
@@ -280,3 +228,50 @@ void GUIPanel::on_pingButton_clicked()
     _client->publish(msg);
 }
 
+
+void GUIPanel::on_gpioRedButton_toggled(bool checked)
+{
+    //Rojo
+    if (checked)
+    {
+        ui->gpioRedButton->setText("Apaga");
+
+    }
+    else
+    {
+        ui->gpioRedButton->setText("Enciende");
+    }
+    SendMessageForGpioRGBLeds();
+}
+
+
+void GUIPanel::on_gpioGreenButton_toggled(bool checked)
+{
+    //Verde
+    if (checked)
+    {
+        ui->gpioBlueButton->setText("Apaga");
+
+    }
+    else
+    {
+        ui->gpioBlueButton->setText("Enciende");
+    }
+    SendMessageForGpioRGBLeds();
+}
+
+
+void GUIPanel::on_gpioBlueButton_toggled(bool checked)
+{
+    //Orange
+    if (checked)
+    {
+        ui->gpioGreenButton->setText("Apaga");
+
+    }
+    else
+    {
+        ui->gpioGreenButton->setText("Enciende");
+    }
+    SendMessageForGpioRGBLeds();
+}

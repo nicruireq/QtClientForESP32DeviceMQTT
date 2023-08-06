@@ -31,13 +31,13 @@ private slots:
     void onMQTT_subscribed(const QString &topic);
 
 
-    void on_pushButton_2_toggled(bool checked);
-
-    void on_pushButton_4_toggled(bool checked);
-
-    void on_pushButton_3_toggled(bool checked);
-
     void on_pingButton_clicked();
+
+    void on_gpioRedButton_toggled(bool checked);
+
+    void on_gpioGreenButton_toggled(bool checked);
+
+    void on_gpioBlueButton_toggled(bool checked);
 
 private: // funciones privadas
 //    void pingDevice();
@@ -45,7 +45,7 @@ private: // funciones privadas
     void processError(const QString &s);
     void activateRunButton();
     void cambiaLEDs();
-    void SendMessage();
+    void SendMessageForGpioRGBLeds();
 private:
     Ui::GUIPanel *ui;
     int transactionCount;
