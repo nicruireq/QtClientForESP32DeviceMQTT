@@ -177,8 +177,106 @@
     </property>
    </widget>
   </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>250</y>
+     <width>261</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Buttons</string>
+   </property>
+   <widget class="QPushButton" name="sondeaButton">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>100</y>
+      <width>82</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sondea</string>
+    </property>
+   </widget>
+   <widget class="Led" name="button1StateLed">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>60</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Color Led component</string>
+    </property>
+    <property name="whatsThis">
+     <string>Led indicator</string>
+    </property>
+   </widget>
+   <widget class="Led" name="button2StateLed">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>60</y>
+      <width>16</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Color Led component</string>
+    </property>
+    <property name="whatsThis">
+     <string>Led indicator</string>
+    </property>
+    <property name="color">
+     <color>
+      <red>71</red>
+      <green>255</green>
+      <blue>92</blue>
+     </color>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>30</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Button1</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>30</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Button2</string>
+    </property>
+   </widget>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Led</class>
+   <extends>QWidget</extends>
+   <header>analogwidgets/led.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>runButton</tabstop>
  </tabstops>

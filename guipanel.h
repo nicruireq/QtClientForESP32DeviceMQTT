@@ -5,6 +5,8 @@
 #include <QtSerialPort/qserialport.h>
 #include "qmqtt.h"
 
+#include "topic.h"
+
 namespace Ui {
 class GUIPanel;
 }
@@ -39,13 +41,21 @@ private slots:
 
     void on_gpioBlueButton_toggled(bool checked);
 
+    void on_sondeaButton_clicked();
+
 private: // funciones privadas
 //    void pingDevice();
     void startClient();
     void processError(const QString &s);
     void activateRunButton();
     void cambiaLEDs();
+    // Functions to subscribe new messages on topics
     void SendMessageForGpioRGBLeds();
+    void SendMessageCommand(const Commands &name);
+    // Functions to process incoming data on yopic by topic
+    void processFromTopicCommand(const QJsonObject &jsonData);
+    void processFromTopicGPIOLed(const QJsonObject &jsonData);
+    void processFromTopicButtons(const QJsonObject &jsonData);
 private:
     Ui::GUIPanel *ui;
     int transactionCount;

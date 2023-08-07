@@ -13,7 +13,8 @@
 #include<stdint.h>      // Cabecera para usar tipos de enteros con tamaño
 #include<stdbool.h>     // Cabecera para usar booleanos
 
-#include "topic.h"
+
+std::map<QString, TopicName> mapTopicWithTag;
 
 GUIPanel::GUIPanel(QWidget *parent) :  // Constructor de la clase
     QWidget(parent),
@@ -31,6 +32,9 @@ GUIPanel::GUIPanel(QWidget *parent) :  // Constructor de la clase
     connect(_client, SIGNAL(subscribed(const QString &)), this, SLOT(onMQTT_subscribed(const QString &)));    
 
     connected=false;                 // Todavía no hemos establecido la conexión USB
+
+    // initialize maps of topic strings to integer tags
+    initializeMapOfTopics();
 }
 
 GUIPanel::~GUIPanel() // Destructor de la clase
@@ -85,14 +89,122 @@ void GUIPanel::on_pushButton_clicked()
 }
 
 
+void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
+{
+    // get response on topic COMMAND
+    QJsonValue cmdResponse = jsonData["cmd"];
+    if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[PING_RESPONSE])
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Received ping response from board!!!");
+        msgBox.setWindowTitle("PING response");
+        msgBox.exec();
+    }
+}
+
+
+void GUIPanel::processFromTopicGPIOLed(const QJsonObject &jsonData)
+{
+    bool previousblockinstate, checked;
+    // Manage GPIO RGB LEDs representation
+    QJsonValue entrada=jsonData["redLed"]; //Obtengo la entrada redLed. Esto lo puedo hacer porque el operador [] está sobrecargado
+    QJsonValue entrada2=jsonData["greenLed"]; //Obtengo la entrada orangeLed. Esto lo puedo hacer porque el operador [] está sobrecargado
+    QJsonValue entrada3=jsonData["blueLed"]; //Obtengo la entrada greenLed. Esto lo puedo hacer porque el operador [] está sobrecargado
+
+    if (entrada.isBool())
+    {   //Compruebo que es booleano...
+
+        checked=entrada.toBool(); //Leo el valor de objeto (si fuese entero usaria toInt(), toDouble() si es doble....
+        previousblockinstate=ui->gpioRedButton->blockSignals(true);   //Esto es para evitar que el cambio de valor
+            //provoque otro envio al topic por el que he recibido
+
+        ui->gpioRedButton->setChecked(checked);
+        if (checked)
+        {
+            ui->gpioRedButton->setText("Apaga");
+
+        }
+        else
+        {
+            ui->gpioRedButton->setText("Enciende");
+        }
+        ui->gpioRedButton->blockSignals(previousblockinstate);
+    }
+    if (entrada2.isBool())
+    {   //Compruebo que es booleano...
+
+        checked=entrada2.toBool(); //Leo el valor de objeto (si fuese entero usaria toInt(), toDouble() si es doble....
+        previousblockinstate=ui->gpioGreenButton->blockSignals(true);   //Esto es para evitar que el cambio de valor
+            //provoque otro envio al topic por el que he recibido
+
+        ui->gpioGreenButton->setChecked(checked);
+        if (checked)
+        {
+            ui->gpioGreenButton->setText("Apaga");
+
+        }
+        else
+        {
+            ui->gpioGreenButton->setText("Enciende");
+        }
+        ui->gpioGreenButton->blockSignals(previousblockinstate);
+    }
+    if (entrada3.isBool())
+    {   //Compruebo que es booleano...
+
+        checked=entrada3.toBool(); //Leo el valor de objeto (si fuese entero usaria toInt(), toDouble() si es doble....
+        previousblockinstate=ui->gpioBlueButton->blockSignals(true);   //Esto es para evitar que el cambio de valor
+            //provoque otro envio al topic por el que he recibido
+
+        ui->gpioBlueButton->setChecked(checked);
+        if (checked)
+        {
+            ui->gpioBlueButton->setText("Apaga");
+
+        }
+        else
+        {
+            ui->gpioBlueButton->setText("Enciende");
+        }
+        ui->gpioBlueButton->blockSignals(previousblockinstate);
+    }
+}
+
+
+void GUIPanel::processFromTopicButtons(const QJsonObject &jsonData)
+{
+    // get response from buttons state polling
+    // get response on topic COMMAND
+    QJsonValue button1State = jsonData["button1"];
+    QJsonValue button2State = jsonData["button2"];
+    const QString on = "on";
+    const QString off = "off";
+
+    if (button1State.isString() && button1State.toString()==on)
+    {
+        ui->button1StateLed->setChecked(true);
+    }
+    else if (button1State.isString() && button1State.toString()==off)
+    {
+        ui->button1StateLed->setChecked(false);
+    }
+
+    if (button2State.isString() && button2State.toString()==on)
+    {
+        ui->button2StateLed->setChecked(true);
+    }
+    else if (button2State.isString() && button2State.toString()==off)
+    {
+        ui->button2StateLed->setChecked(false);
+    }
+
+}
+
+
 void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
 {
-    bool previousblockinstate,checked;
     if (connected)
     {
-        //Deshacemos el escalado
-
-
         QJsonParseError error;
         QJsonDocument mensaje=QJsonDocument::fromJson(message.payload(),&error);
 
@@ -100,80 +212,21 @@ void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
         { //Tengo que comprobar que el mensaje es del tipo adecuado y no hay errores de parseo...
 
             QJsonObject objeto_json=mensaje.object();
-            QJsonValue entrada=objeto_json["redLed"]; //Obtengo la entrada redLed. Esto lo puedo hacer porque el operador [] está sobrecargado
-            QJsonValue entrada2=objeto_json["greenLed"]; //Obtengo la entrada orangeLed. Esto lo puedo hacer porque el operador [] está sobrecargado
-            QJsonValue entrada3=objeto_json["blueLed"]; //Obtengo la entrada greenLed. Esto lo puedo hacer porque el operador [] está sobrecargado
 
-            // obtener respuesta en topic COMMAND
-            QJsonValue cmdResponse = objeto_json["cmd"];
-            if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[PING_RESPONSE])
-            {
-                QMessageBox msgBox;
-                msgBox.setText("Received ping response from board!!!");
-                msgBox.setWindowTitle("PING response");
-                msgBox.exec();
+            switch (mapTopicWithTag[message.topic()]) {
+            case COMMAND:
+                processFromTopicCommand(objeto_json);
+                break;
+            case LED:
+                processFromTopicGPIOLed(objeto_json);
+                break;
+            case BUTTONS:
+                processFromTopicButtons(objeto_json);
+                break;
+            default:
+                break;
             }
-
-            if (entrada.isBool())
-            {   //Compruebo que es booleano...
-
-                checked=entrada.toBool(); //Leo el valor de objeto (si fuese entero usaria toInt(), toDouble() si es doble....
-                previousblockinstate=ui->gpioRedButton->blockSignals(true);   //Esto es para evitar que el cambio de valor
-                                                                     //provoque otro envio al topic por el que he recibido
-
-                ui->gpioRedButton->setChecked(checked);
-                if (checked)
-                {
-                    ui->gpioRedButton->setText("Apaga");
-
-                }
-                else
-                {
-                    ui->gpioRedButton->setText("Enciende");
-                }
-                ui->gpioRedButton->blockSignals(previousblockinstate);
-            }            
-            if (entrada2.isBool())
-            {   //Compruebo que es booleano...
-
-                checked=entrada2.toBool(); //Leo el valor de objeto (si fuese entero usaria toInt(), toDouble() si es doble....
-                previousblockinstate=ui->gpioGreenButton->blockSignals(true);   //Esto es para evitar que el cambio de valor
-                                                                     //provoque otro envio al topic por el que he recibido
-
-                ui->gpioGreenButton->setChecked(checked);
-                if (checked)
-                {
-                    ui->gpioGreenButton->setText("Apaga");
-
-                }
-                else
-                {
-                    ui->gpioGreenButton->setText("Enciende");
-                }
-                ui->gpioGreenButton->blockSignals(previousblockinstate);
-            }
-            if (entrada3.isBool())
-            {   //Compruebo que es booleano...
-
-                checked=entrada3.toBool(); //Leo el valor de objeto (si fuese entero usaria toInt(), toDouble() si es doble....
-                previousblockinstate=ui->gpioBlueButton->blockSignals(true);   //Esto es para evitar que el cambio de valor
-                                                                     //provoque otro envio al topic por el que he recibido
-
-                ui->gpioBlueButton->setChecked(checked);
-                if (checked)
-                {
-                    ui->gpioBlueButton->setText("Apaga");
-
-                }
-                else
-                {
-                    ui->gpioBlueButton->setText("Enciende");
-                }
-                ui->gpioBlueButton->blockSignals(previousblockinstate);
-            }
-        }
-
-
+        }   // data processing end
     }
 }
 
@@ -193,6 +246,7 @@ void GUIPanel::onMQTT_Connected()
     // suscribir a topic para enviar comandos a la placa
     _client->subscribe(topics[COMMAND],0);
     _client->subscribe(topics[LED],0);
+    _client->subscribe(topics[BUTTONS],0);
 }
 
 
@@ -216,16 +270,22 @@ void GUIPanel::SendMessageForGpioRGBLeds()
 
 }
 
+// Generate json message of type command and publish
+// on COMMAND topic
+void GUIPanel::SendMessageCommand(const Commands &name)
+{
+    QJsonObject jsonCmd;
+    jsonCmd["cmd"] = topicCommandCmds[name];
+    QJsonDocument payload(jsonCmd);
+    QMQTT::Message msg(0, topics[COMMAND], payload.toJson());
+
+    _client->publish(msg);
+}
+
 
 void GUIPanel::on_pingButton_clicked()
 {
-    QJsonObject pingCmd;
-    pingCmd["cmd"] = topicCommandCmds[PING];
-    QJsonDocument payload(pingCmd);
-    QMQTT::Message msg(0, topics[COMMAND], payload.toJson());
-
-    //Publica el mensaje
-    _client->publish(msg);
+    SendMessageCommand(PING);
 }
 
 
@@ -275,3 +335,9 @@ void GUIPanel::on_gpioBlueButton_toggled(bool checked)
     }
     SendMessageForGpioRGBLeds();
 }
+
+void GUIPanel::on_sondeaButton_clicked()
+{
+    SendMessageCommand(POLL_BUTTONS);
+}
+

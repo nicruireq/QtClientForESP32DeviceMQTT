@@ -2,7 +2,7 @@ QT       += core gui serialport widgets network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++17 qwt qmqtt
+CONFIG += c++17 qwt analogwidgets qmqtt
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -10,7 +10,8 @@ CONFIG += c++17 qwt qmqtt
 
 SOURCES += \
     main.cpp \
-    guipanel.cpp
+    guipanel.cpp \
+    topic.cpp
 
 HEADERS += \
     guipanel.h \
