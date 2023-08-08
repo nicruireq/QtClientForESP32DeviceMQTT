@@ -23,13 +23,21 @@ const QString topics[] = {
 typedef enum Commands {
     PING,
     PING_RESPONSE,
-    POLL_BUTTONS
+    POLL_BUTTONS,
+    MODE_LEDS_PWM,
+    ACK_MODE_LEDS_PWM,
+    MODE_LEDS_GPIO,
+    ACK_MODE_LEDS_GPIO
 } Commands;
 
 const QString topicCommandCmds[] = {
     "ping",
     "ping_response",
-    "poll_buttons"
+    "poll_buttons",
+    "mode_leds_pwm",
+    "ack_mode_leds_pwm",
+    "mode_leds_gpio",
+    "ack_mode_leds_gpio"
 };
 
 // Map to associate the strings topics with the enum values TopicName

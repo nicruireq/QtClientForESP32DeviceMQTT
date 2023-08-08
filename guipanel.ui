@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>912</width>
+    <width>1026</width>
     <height>562</height>
    </rect>
   </property>
@@ -81,10 +81,10 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>80</y>
+     <x>270</x>
+     <y>190</y>
      <width>171</width>
-     <height>131</height>
+     <height>151</height>
     </rect>
    </property>
    <property name="title">
@@ -94,7 +94,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>50</y>
+      <y>60</y>
       <width>101</width>
       <height>41</height>
      </rect>
@@ -104,13 +104,13 @@
     </property>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2">
+  <widget class="QGroupBox" name="groupBox_onOffLedsGpioButtons">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>80</y>
+     <x>270</x>
+     <y>60</y>
      <width>441</width>
-     <height>171</height>
+     <height>121</height>
     </rect>
    </property>
    <property name="title">
@@ -120,7 +120,7 @@
     <property name="geometry">
      <rect>
       <x>290</x>
-      <y>60</y>
+      <y>40</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -141,8 +141,8 @@
    <widget class="QPushButton" name="gpioGreenButton">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>60</y>
+      <x>160</x>
+      <y>40</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -160,8 +160,8 @@
    <widget class="QPushButton" name="gpioRedButton">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>60</y>
+      <x>30</x>
+      <y>40</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -180,20 +180,20 @@
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>250</y>
-     <width>261</width>
+     <x>20</x>
+     <y>190</y>
+     <width>221</width>
      <height>151</height>
     </rect>
    </property>
    <property name="title">
-    <string>Buttons</string>
+    <string>Buttons Polling</string>
    </property>
    <widget class="QPushButton" name="sondeaButton">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>100</y>
+      <x>70</x>
+      <y>90</y>
       <width>82</width>
       <height>28</height>
      </rect>
@@ -205,7 +205,7 @@
    <widget class="Led" name="button1StateLed">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>40</x>
       <y>60</y>
       <width>16</width>
       <height>16</height>
@@ -221,7 +221,7 @@
    <widget class="Led" name="button2StateLed">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>150</x>
       <y>60</y>
       <width>16</width>
       <height>16</height>
@@ -244,7 +244,7 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>30</y>
       <width>63</width>
       <height>20</height>
@@ -257,7 +257,7 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>170</x>
+      <x>130</x>
       <y>30</y>
       <width>63</width>
       <height>20</height>
@@ -268,6 +268,151 @@
     </property>
    </widget>
   </widget>
+  <widget class="QGroupBox" name="groupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>221</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>LEDs Mode</string>
+   </property>
+   <widget class="QRadioButton" name="radioBtnGPIO">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>40</y>
+      <width>106</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>GPIO</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+    <property name="autoExclusive">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="radioBtnPWM">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>80</y>
+      <width>106</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PWM</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_5">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>190</y>
+     <width>511</width>
+     <height>211</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>LEDs Controller with PWM</string>
+   </property>
+   <widget class="QwtKnob" name="redKnob">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>150</width>
+      <height>150</height>
+     </rect>
+    </property>
+    <property name="upperBound">
+     <double>255.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QwtKnob" name="greenKnob">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>30</y>
+      <width>150</width>
+      <height>150</height>
+     </rect>
+    </property>
+    <property name="upperBound">
+     <double>255.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QwtKnob" name="blueKnob">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>30</y>
+      <width>150</width>
+      <height>150</height>
+     </rect>
+    </property>
+    <property name="upperBound">
+     <double>255.000000000000000</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>170</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Red</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>170</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Green</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>170</y>
+      <width>63</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Blue</string>
+    </property>
+   </widget>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -275,6 +420,11 @@
    <class>Led</class>
    <extends>QWidget</extends>
    <header>analogwidgets/led.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QwtKnob</class>
+   <extends>QWidget</extends>
+   <header>qwt_knob.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

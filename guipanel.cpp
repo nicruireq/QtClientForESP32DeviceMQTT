@@ -93,13 +93,34 @@ void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
 {
     // get response on topic COMMAND
     QJsonValue cmdResponse = jsonData["cmd"];
+
     if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[PING_RESPONSE])
     {
+        // process ping response
         QMessageBox msgBox;
         msgBox.setText("Received ping response from board!!!");
         msgBox.setWindowTitle("PING response");
         msgBox.exec();
     }
+    else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_MODE_LEDS_PWM])
+    {
+        // process response to change mode of leds to pwm
+        // This ack means that the change to PWM in the board has succeed
+        ui->redKnob->setEnabled(true);
+        ui->greenKnob->setEnabled(true);
+        ui->blueKnob->setEnabled(true);
+        ui->groupBox_onOffLedsGpioButtons->setDisabled(true);
+    }
+    else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_MODE_LEDS_GPIO])
+    {
+        // process response to change mode of leds to GPIO
+        // This ack means that the change to GPIO in the board has succeed
+        ui->redKnob->setDisabled(true);
+        ui->greenKnob->setDisabled(true);
+        ui->blueKnob->setDisabled(true);
+        ui->groupBox_onOffLedsGpioButtons->setEnabled(true);
+    }
+
 }
 
 
@@ -270,6 +291,23 @@ void GUIPanel::SendMessageForGpioRGBLeds()
 
 }
 
+
+void GUIPanel::SendMessageForPWMRGBLeds()
+{
+    QJsonObject objeto_json;
+
+    objeto_json["redLed"] = (uint8_t) ui->redKnob->value();
+    objeto_json["greenLed"] = (uint8_t) ui->greenKnob->value();
+    objeto_json["blueLed"] = (uint8_t) ui->blueKnob->value();
+
+    QJsonDocument mensaje(objeto_json);
+
+    QMQTT::Message msg(0, topics[LED], mensaje.toJson());
+
+    _client->publish(msg);
+}
+
+
 // Generate json message of type command and publish
 // on COMMAND topic
 void GUIPanel::SendMessageCommand(const Commands &name)
@@ -339,5 +377,41 @@ void GUIPanel::on_gpioBlueButton_toggled(bool checked)
 void GUIPanel::on_sondeaButton_clicked()
 {
     SendMessageCommand(POLL_BUTTONS);
+}
+
+
+void GUIPanel::on_radioBtnGPIO_clicked(bool checked)
+{
+    if (checked)
+    {
+        SendMessageCommand(MODE_LEDS_GPIO);
+    }
+}
+
+
+void GUIPanel::on_radioBtnPWM_clicked(bool checked)
+{
+    if (checked)
+    {
+        SendMessageCommand(MODE_LEDS_PWM);
+    }
+}
+
+
+void GUIPanel::on_redKnob_valueChanged(double value)
+{
+    SendMessageForPWMRGBLeds();
+}
+
+
+void GUIPanel::on_greenKnob_valueChanged(double value)
+{
+    SendMessageForPWMRGBLeds();
+}
+
+
+void GUIPanel::on_blueKnob_valueChanged(double value)
+{
+    SendMessageForPWMRGBLeds();
 }
 

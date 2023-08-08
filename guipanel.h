@@ -43,6 +43,16 @@ private slots:
 
     void on_sondeaButton_clicked();
 
+    void on_radioBtnGPIO_clicked(bool checked);
+
+    void on_radioBtnPWM_clicked(bool checked);
+
+    void on_redKnob_valueChanged(double value);
+
+    void on_greenKnob_valueChanged(double value);
+
+    void on_blueKnob_valueChanged(double value);
+
 private: // funciones privadas
 //    void pingDevice();
     void startClient();
@@ -51,6 +61,7 @@ private: // funciones privadas
     void cambiaLEDs();
     // Functions to subscribe new messages on topics
     void SendMessageForGpioRGBLeds();
+    void SendMessageForPWMRGBLeds();
     void SendMessageCommand(const Commands &name);
     // Functions to process incoming data on yopic by topic
     void processFromTopicCommand(const QJsonObject &jsonData);
