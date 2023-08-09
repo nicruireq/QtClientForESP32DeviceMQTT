@@ -12,6 +12,7 @@
 
 #include<stdint.h>      // Cabecera para usar tipos de enteros con tamaño
 #include<stdbool.h>     // Cabecera para usar booleanos
+#include <vector>
 
 
 std::map<QString, TopicName> mapTopicWithTag;
@@ -32,6 +33,7 @@ GUIPanel::GUIPanel(QWidget *parent) :  // Constructor de la clase
     connect(_client, SIGNAL(subscribed(const QString &)), this, SLOT(onMQTT_subscribed(const QString &)));    
 
     connected=false;                 // Todavía no hemos establecido la conexión USB
+    isLedModePWM = false;    // By default always start in mode GPIO
 
     // initialize maps of topic strings to integer tags
     initializeMapOfTopics();
@@ -110,6 +112,11 @@ void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
         ui->greenKnob->setEnabled(true);
         ui->blueKnob->setEnabled(true);
         ui->groupBox_onOffLedsGpioButtons->setDisabled(true);
+        isLedModePWM = true;
+        // change control of led mode in GUI
+        bool previousblockinstate = ui->radioBtnPWM->blockSignals(true);
+        ui->radioBtnPWM->setChecked(true);
+        ui->radioBtnPWM->blockSignals(previousblockinstate);
     }
     else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_MODE_LEDS_GPIO])
     {
@@ -119,6 +126,11 @@ void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
         ui->greenKnob->setDisabled(true);
         ui->blueKnob->setDisabled(true);
         ui->groupBox_onOffLedsGpioButtons->setEnabled(true);
+        isLedModePWM = false;
+        // change control of led mode in GUI
+        bool previousblockinstate = ui->radioBtnGPIO->blockSignals(true);
+        ui->radioBtnGPIO->setChecked(true);
+        ui->radioBtnGPIO->blockSignals(previousblockinstate);
     }
 
 }
@@ -132,6 +144,7 @@ void GUIPanel::processFromTopicGPIOLed(const QJsonObject &jsonData)
     QJsonValue entrada2=jsonData["greenLed"]; //Obtengo la entrada orangeLed. Esto lo puedo hacer porque el operador [] está sobrecargado
     QJsonValue entrada3=jsonData["blueLed"]; //Obtengo la entrada greenLed. Esto lo puedo hacer porque el operador [] está sobrecargado
 
+    // Case Mode GPIO
     if (entrada.isBool())
     {   //Compruebo que es booleano...
 
@@ -192,6 +205,36 @@ void GUIPanel::processFromTopicGPIOLed(const QJsonObject &jsonData)
 }
 
 
+void GUIPanel::processFromTopicPWMLed(const QJsonObject &jsonData)
+{
+    bool previousblockinstate;
+
+    QJsonValue inputRed = jsonData["redLed"];
+    QJsonValue inputGreen = jsonData["greenLed"];
+    QJsonValue inputBlue = jsonData["blueLed"];
+
+    previousblockinstate=ui->redKnob->blockSignals(true);   //Esto es para evitar que el cambio de valor
+    if (inputRed.isDouble())
+    {
+        ui->redKnob->setValue(inputRed.toInt());
+    }
+    ui->redKnob->blockSignals(previousblockinstate);
+
+    previousblockinstate=ui->greenKnob->blockSignals(true);
+    if (inputGreen.isDouble())
+    {
+        ui->greenKnob->setValue(inputGreen.toInt());
+    }
+    ui->greenKnob->blockSignals(previousblockinstate);
+
+    previousblockinstate=ui->blueKnob->blockSignals(true);
+    if (inputBlue.isDouble())
+    {
+        ui->blueKnob->setValue(inputBlue.toInt());
+    }
+    ui->blueKnob->blockSignals(previousblockinstate);
+}
+
 void GUIPanel::processFromTopicButtons(const QJsonObject &jsonData)
 {
     // get response from buttons state polling
@@ -239,7 +282,10 @@ void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
                 processFromTopicCommand(objeto_json);
                 break;
             case LED:
-                processFromTopicGPIOLed(objeto_json);
+                if (isLedModePWM)
+                    processFromTopicPWMLed(objeto_json);
+                else
+                    processFromTopicGPIOLed(objeto_json);
                 break;
             case BUTTONS:
                 processFromTopicButtons(objeto_json);

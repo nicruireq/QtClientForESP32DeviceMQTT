@@ -66,12 +66,13 @@ private: // funciones privadas
     // Functions to process incoming data on yopic by topic
     void processFromTopicCommand(const QJsonObject &jsonData);
     void processFromTopicGPIOLed(const QJsonObject &jsonData);
+    void processFromTopicPWMLed(const QJsonObject &jsonData);
     void processFromTopicButtons(const QJsonObject &jsonData);
 private:
     Ui::GUIPanel *ui;
     int transactionCount;
     QMQTT::Client *_client;
-    bool connected;
+    bool connected, isLedModePWM;   // if isLedModePWM == false -> mode is GPIO
 };
 
 #endif // GUIPANEL_H
