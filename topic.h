@@ -6,10 +6,13 @@
 
 using namespace std;
 
+// Keep synchronized enum TopicName
+// with array topics
 typedef enum TopicName {
     COMMAND,
     LED,
-    BUTTONS
+    BUTTONS,
+    ADC
 } TopicName;
 
 const QString BASE = "/mseei/imicro/nrr/";
@@ -17,7 +20,8 @@ const QString BASE = "/mseei/imicro/nrr/";
 const QString topics[] = {
     BASE + "COMMAND",
     BASE + "LED",
-    BASE + "BUTTONS"
+    BASE + "BUTTONS",
+    BASE + "ADC"
 };
 
 typedef enum Commands {

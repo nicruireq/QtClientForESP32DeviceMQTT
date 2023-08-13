@@ -264,6 +264,16 @@ void GUIPanel::processFromTopicButtons(const QJsonObject &jsonData)
 
 }
 
+void GUIPanel::processFromTopicAdc(const QJsonObject &jsonData)
+{
+    QJsonValue lastReading = jsonData["last_reading"];
+
+    if (lastReading.isDouble())
+    {
+        ui->potentiometerReading->setValue(lastReading.toInt());
+    }
+}
+
 
 void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
 {
@@ -290,6 +300,8 @@ void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
             case BUTTONS:
                 processFromTopicButtons(objeto_json);
                 break;
+            case ADC:
+                processFromTopicAdc(objeto_json);
             default:
                 break;
             }
@@ -310,10 +322,11 @@ void GUIPanel::onMQTT_Connected()
 
     connected=true;
 
-    // suscribir a topic para enviar comandos a la placa
-    _client->subscribe(topics[COMMAND],0);
-    _client->subscribe(topics[LED],0);
-    _client->subscribe(topics[BUTTONS],0);
+    // suscribir a topics
+    for (QString t : topics)
+    {
+        _client->subscribe(t, 0);
+    }
 }
 
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1026</width>
-    <height>562</height>
+    <width>1162</width>
+    <height>611</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,8 +29,8 @@
   <widget class="QLabel" name="statusLabel">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>530</y>
+     <x>90</x>
+     <y>570</y>
      <width>331</width>
      <height>17</height>
     </rect>
@@ -42,8 +42,8 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>530</y>
+     <x>20</x>
+     <y>570</y>
      <width>64</width>
      <height>27</height>
     </rect>
@@ -78,344 +78,400 @@
     <string>broker.hivemq.com</string>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox">
-   <property name="geometry">
-    <rect>
-     <x>270</x>
-     <y>190</y>
-     <width>171</width>
-     <height>151</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>PING</string>
-   </property>
-   <widget class="QPushButton" name="pingButton">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>60</y>
-      <width>101</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Ping</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_onOffLedsGpioButtons">
-   <property name="geometry">
-    <rect>
-     <x>270</x>
-     <y>60</y>
-     <width>441</width>
-     <height>121</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>ON/OFF RGB LEDs (GPIO mode only)</string>
-   </property>
-   <widget class="QPushButton" name="gpioBlueButton">
-    <property name="geometry">
-     <rect>
-      <x>290</x>
-      <y>40</y>
-      <width>101</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color:blue</string>
-    </property>
-    <property name="text">
-     <string>Enciende</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="gpioGreenButton">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>40</y>
-      <width>101</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color:green</string>
-    </property>
-    <property name="text">
-     <string>Enciende</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="gpioRedButton">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>40</y>
-      <width>101</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color:red</string>
-    </property>
-    <property name="text">
-     <string>Enciende</string>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_3">
+  <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>190</y>
-     <width>221</width>
-     <height>151</height>
+     <y>50</y>
+     <width>1121</width>
+     <height>491</height>
     </rect>
    </property>
-   <property name="title">
-    <string>Buttons Polling</string>
+   <property name="currentIndex">
+    <number>1</number>
    </property>
-   <widget class="QPushButton" name="sondeaButton">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>90</y>
-      <width>82</width>
-      <height>28</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Sondea</string>
-    </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Main controls</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>150</y>
+       <width>511</width>
+       <height>211</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>LEDs Controller with PWM</string>
+     </property>
+     <widget class="QwtKnob" name="redKnob">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>150</width>
+        <height>150</height>
+       </rect>
+      </property>
+      <property name="upperBound">
+       <double>255.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QwtKnob" name="greenKnob">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>30</y>
+        <width>150</width>
+        <height>150</height>
+       </rect>
+      </property>
+      <property name="upperBound">
+       <double>255.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QwtKnob" name="blueKnob">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>30</y>
+        <width>150</width>
+        <height>150</height>
+       </rect>
+      </property>
+      <property name="upperBound">
+       <double>255.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>170</y>
+        <width>63</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Red</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>170</y>
+        <width>63</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Green</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>170</y>
+        <width>63</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Blue</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_onOffLedsGpioButtons">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>20</y>
+       <width>441</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>ON/OFF RGB LEDs (GPIO mode only)</string>
+     </property>
+     <widget class="QPushButton" name="gpioBlueButton">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>40</y>
+        <width>101</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:blue</string>
+      </property>
+      <property name="text">
+       <string>Enciende</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="gpioGreenButton">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>40</y>
+        <width>101</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:green</string>
+      </property>
+      <property name="text">
+       <string>Enciende</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="gpioRedButton">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>40</y>
+        <width>101</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:red</string>
+      </property>
+      <property name="text">
+       <string>Enciende</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>20</y>
+       <width>221</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>LEDs Mode</string>
+     </property>
+     <widget class="QRadioButton" name="radioBtnGPIO">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>40</y>
+        <width>106</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>GPIO</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+      <property name="autoExclusive">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioBtnPWM">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>80</y>
+        <width>106</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>PWM</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>150</y>
+       <width>221</width>
+       <height>151</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Buttons Polling</string>
+     </property>
+     <widget class="QPushButton" name="sondeaButton">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>90</y>
+        <width>82</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Sondea</string>
+      </property>
+     </widget>
+     <widget class="Led" name="button1StateLed">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>60</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Color Led component</string>
+      </property>
+      <property name="whatsThis">
+       <string>Led indicator</string>
+      </property>
+     </widget>
+     <widget class="Led" name="button2StateLed">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>60</y>
+        <width>16</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Color Led component</string>
+      </property>
+      <property name="whatsThis">
+       <string>Led indicator</string>
+      </property>
+      <property name="color">
+       <color>
+        <red>71</red>
+        <green>255</green>
+        <blue>92</blue>
+       </color>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>63</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Button1</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>30</y>
+        <width>63</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Button2</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>150</y>
+       <width>171</width>
+       <height>151</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>PING</string>
+     </property>
+     <widget class="QPushButton" name="pingButton">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>60</y>
+        <width>101</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Ping</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
-   <widget class="Led" name="button1StateLed">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>60</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Color Led component</string>
-    </property>
-    <property name="whatsThis">
-     <string>Led indicator</string>
-    </property>
-   </widget>
-   <widget class="Led" name="button2StateLed">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>60</y>
-      <width>16</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Color Led component</string>
-    </property>
-    <property name="whatsThis">
-     <string>Led indicator</string>
-    </property>
-    <property name="color">
-     <color>
-      <red>71</red>
-      <green>255</green>
-      <blue>92</blue>
-     </color>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>63</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Button1</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>30</y>
-      <width>63</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Button2</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_4">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>60</y>
-     <width>221</width>
-     <height>121</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>LEDs Mode</string>
-   </property>
-   <widget class="QRadioButton" name="radioBtnGPIO">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>40</y>
-      <width>106</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>GPIO</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-    <property name="autoExclusive">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="radioBtnPWM">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>80</y>
-      <width>106</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>PWM</string>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="groupBox_5">
-   <property name="geometry">
-    <rect>
-     <x>470</x>
-     <y>190</y>
-     <width>511</width>
-     <height>211</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>LEDs Controller with PWM</string>
-   </property>
-   <widget class="QwtKnob" name="redKnob">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>30</y>
-      <width>150</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="upperBound">
-     <double>255.000000000000000</double>
-    </property>
-   </widget>
-   <widget class="QwtKnob" name="greenKnob">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>30</y>
-      <width>150</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="upperBound">
-     <double>255.000000000000000</double>
-    </property>
-   </widget>
-   <widget class="QwtKnob" name="blueKnob">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>350</x>
-      <y>30</y>
-      <width>150</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="upperBound">
-     <double>255.000000000000000</double>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>170</y>
-      <width>63</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Red</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>170</y>
-      <width>63</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Green</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_6">
-    <property name="geometry">
-     <rect>
-      <x>410</x>
-      <y>170</y>
-      <width>63</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Blue</string>
-    </property>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>ADC Viewer</string>
+    </attribute>
+    <widget class="ManoMeter" name="potentiometerReading">
+     <property name="geometry">
+      <rect>
+       <x>330</x>
+       <y>40</y>
+       <width>421</width>
+       <height>381</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Shows the pressure</string>
+     </property>
+     <property name="whatsThis">
+      <string>The bar meter widget displays the pressure attached to it</string>
+     </property>
+     <property name="maximum">
+      <double>3300.000000000000000</double>
+     </property>
+     <property name="nominal">
+      <double>1000.000000000000000</double>
+     </property>
+     <property name="critical">
+      <double>2000.000000000000000</double>
+     </property>
+     <property name="suffix">
+      <string> [mV]</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
+  <customwidget>
+   <class>ManoMeter</class>
+   <extends>QWidget</extends>
+   <header>analogwidgets/manometer.h</header>
+  </customwidget>
   <customwidget>
    <class>Led</class>
    <extends>QWidget</extends>

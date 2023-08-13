@@ -68,6 +68,7 @@ private: // funciones privadas
     void processFromTopicGPIOLed(const QJsonObject &jsonData);
     void processFromTopicPWMLed(const QJsonObject &jsonData);
     void processFromTopicButtons(const QJsonObject &jsonData);
+    void processFromTopicAdc(const QJsonObject &jsonData);
 private:
     Ui::GUIPanel *ui;
     int transactionCount;
