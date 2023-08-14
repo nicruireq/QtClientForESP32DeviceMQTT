@@ -57,7 +57,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>71</width>
+     <width>91</width>
      <height>16</height>
     </rect>
    </property>
@@ -78,7 +78,7 @@
     <string>broker.hivemq.com</string>
    </property>
   </widget>
-  <widget class="QTabWidget" name="tabWidget">
+  <widget class="QTabWidget" name="tabGroupForBoardWidgets">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -88,7 +88,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -463,6 +463,41 @@
      </property>
     </widget>
    </widget>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>510</x>
+     <y>10</y>
+     <width>181</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Connection state:</string>
+   </property>
+  </widget>
+  <widget class="Led" name="ledConnectionIndicator">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>20</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Color Led component</string>
+   </property>
+   <property name="whatsThis">
+    <string>Led indicator</string>
+   </property>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

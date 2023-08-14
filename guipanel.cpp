@@ -30,18 +30,34 @@ GUIPanel::GUIPanel(QWidget *parent) :  // Constructor de la clase
 
     connect(_client, SIGNAL(connected()), this, SLOT(onMQTT_Connected()));    
     connect(_client, SIGNAL(received(const QMQTT::Message &)), this, SLOT(onMQTT_Received(const QMQTT::Message &)));
-    connect(_client, SIGNAL(subscribed(const QString &)), this, SLOT(onMQTT_subscribed(const QString &)));    
+    connect(_client, SIGNAL(subscribed(const QString &)), this, SLOT(onMQTT_subscribed(const QString &)));
 
     connected=false;                 // Todavía no hemos establecido la conexión USB
     isLedModePWM = false;    // By default always start in mode GPIO
 
     // initialize maps of topic strings to integer tags
     initializeMapOfTopics();
+
+    // disable gui widgets for controlling board
+    // while mqtt connection is not stablished
+    disableBoardWidgetsInGUI();
 }
 
 GUIPanel::~GUIPanel() // Destructor de la clase
 {
     delete ui;   // Borra el interfaz gráfico asociado a la clase
+}
+
+
+void GUIPanel::disableBoardWidgetsInGUI()
+{
+    ui->tabGroupForBoardWidgets->setDisabled(true);
+}
+
+
+void GUIPanel::enableBoardWidgetsInGUI()
+{
+    ui->tabGroupForBoardWidgets->setEnabled(true);
 }
 
 
@@ -275,6 +291,30 @@ void GUIPanel::processFromTopicAdc(const QJsonObject &jsonData)
 }
 
 
+void GUIPanel::processFromTopicBoardStatus(const QJsonObject &jsonData)
+{
+    QJsonValue boardState = jsonData["status"];
+
+    if (boardState.isString())
+    {
+        if (boardState.toString() == "alive")
+        {
+            ui->ledConnectionIndicator->setColor(QColor(0,255,0));
+            enableBoardWidgetsInGUI();
+        }
+        else if (boardState.toString() == "died")
+        {
+            ui->ledConnectionIndicator->setColor(QColor(255,0,0));
+            // change program state to disconnected
+            connected = false;
+            _client->disconnectFromHost();  // fail??
+            disableBoardWidgetsInGUI();
+            activateRunButton();
+        }
+    }
+}
+
+
 void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
 {
     if (connected)
@@ -302,6 +342,10 @@ void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
                 break;
             case ADC:
                 processFromTopicAdc(objeto_json);
+                break;
+            case BOARD_STATUS:
+                processFromTopicBoardStatus(objeto_json);
+                break;
             default:
                 break;
             }
@@ -327,6 +371,9 @@ void GUIPanel::onMQTT_Connected()
     {
         _client->subscribe(t, 0);
     }
+
+    // enable widgets for controlling board in GUI
+    enableBoardWidgetsInGUI();
 }
 
 

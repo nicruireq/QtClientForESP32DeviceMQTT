@@ -59,6 +59,9 @@ private: // funciones privadas
     void processError(const QString &s);
     void activateRunButton();
     void cambiaLEDs();
+    // gui helper functions
+    void disableBoardWidgetsInGUI();
+    void enableBoardWidgetsInGUI();
     // Functions to subscribe new messages on topics
     void SendMessageForGpioRGBLeds();
     void SendMessageForPWMRGBLeds();
@@ -69,6 +72,7 @@ private: // funciones privadas
     void processFromTopicPWMLed(const QJsonObject &jsonData);
     void processFromTopicButtons(const QJsonObject &jsonData);
     void processFromTopicAdc(const QJsonObject &jsonData);
+    void processFromTopicBoardStatus(const QJsonObject &jsonData);
 private:
     Ui::GUIPanel *ui;
     int transactionCount;

@@ -12,7 +12,8 @@ typedef enum TopicName {
     COMMAND,
     LED,
     BUTTONS,
-    ADC
+    ADC,
+    BOARD_STATUS
 } TopicName;
 
 const QString BASE = "/mseei/imicro/nrr/";
@@ -21,7 +22,8 @@ const QString topics[] = {
     BASE + "COMMAND",
     BASE + "LED",
     BASE + "BUTTONS",
-    BASE + "ADC"
+    BASE + "ADC",
+    BASE + "BOARD/STATUS"
 };
 
 typedef enum Commands {
