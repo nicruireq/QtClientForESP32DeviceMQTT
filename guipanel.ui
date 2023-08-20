@@ -318,7 +318,7 @@
        <x>30</x>
        <y>150</y>
        <width>221</width>
-       <height>151</height>
+       <height>181</height>
       </rect>
      </property>
      <property name="title">
@@ -400,6 +400,19 @@
       </property>
       <property name="text">
        <string>Button2</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxAsyncMode">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>130</y>
+        <width>87</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Async</string>
       </property>
      </widget>
     </widget>

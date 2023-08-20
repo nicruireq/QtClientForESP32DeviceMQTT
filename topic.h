@@ -33,7 +33,11 @@ typedef enum Commands {
     MODE_LEDS_PWM,
     ACK_MODE_LEDS_PWM,
     MODE_LEDS_GPIO,
-    ACK_MODE_LEDS_GPIO
+    ACK_MODE_LEDS_GPIO,
+    MODE_PUSH_BUTTONS_ASYNC,
+    ACK_MODE_PUSH_BUTTONS_ASYNC,
+    MODE_PUSH_BUTTONS_POLL,
+    ACK_MODE_PUSH_BUTTONS_POLL
 } Commands;
 
 const QString topicCommandCmds[] = {
@@ -43,7 +47,11 @@ const QString topicCommandCmds[] = {
     "mode_leds_pwm",
     "ack_mode_leds_pwm",
     "mode_leds_gpio",
-    "ack_mode_leds_gpio"
+    "ack_mode_leds_gpio",
+    "async_buttons",
+    "ack_async_buttons",
+    "no_async_buttons",
+    "ack_no_async_buttons"
 };
 
 // Map to associate the strings topics with the enum values TopicName

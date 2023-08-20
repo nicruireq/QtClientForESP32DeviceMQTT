@@ -58,6 +58,9 @@ void GUIPanel::disableBoardWidgetsInGUI()
 void GUIPanel::enableBoardWidgetsInGUI()
 {
     ui->tabGroupForBoardWidgets->setEnabled(true);
+    // by default indicators for buttons are in off state
+    ui->button1StateLed->setChecked(false);
+    ui->button2StateLed->setChecked(false);
 }
 
 
@@ -147,6 +150,16 @@ void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
         bool previousblockinstate = ui->radioBtnGPIO->blockSignals(true);
         ui->radioBtnGPIO->setChecked(true);
         ui->radioBtnGPIO->blockSignals(previousblockinstate);
+    }
+    else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_MODE_PUSH_BUTTONS_ASYNC])
+    {
+        ui->sondeaButton->setDisabled(true);
+        ui->checkBoxAsyncMode->setEnabled(true);
+    }
+    else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_MODE_PUSH_BUTTONS_POLL])
+    {
+        ui->sondeaButton->setEnabled(true);
+        ui->checkBoxAsyncMode->setEnabled(false);
     }
 
 }
@@ -519,5 +532,23 @@ void GUIPanel::on_greenKnob_valueChanged(double value)
 void GUIPanel::on_blueKnob_valueChanged(double value)
 {
     SendMessageForPWMRGBLeds();
+}
+
+
+void GUIPanel::on_checkBoxAsyncMode_toggled(bool checked)
+{
+    if (connected)
+    {
+        if (!checked)
+        {
+            // change to poll mode
+            SendMessageCommand(MODE_PUSH_BUTTONS_POLL);
+        }
+        else
+        {
+            // if checked -> change to async mode
+            SendMessageCommand(MODE_PUSH_BUTTONS_ASYNC);
+        }
+    }
 }
 
