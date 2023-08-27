@@ -52,6 +52,10 @@ GUIPanel::~GUIPanel() // Destructor de la clase
 void GUIPanel::disableBoardWidgetsInGUI()
 {
     ui->tabGroupForBoardWidgets->setDisabled(true);
+    // Default state of widgets in temperature tab
+    ui->buttonTempStop->setDisabled(true);
+    ui->qwtTempPlot->setDisabled(true);
+
 }
 
 
@@ -160,6 +164,19 @@ void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
     {
         ui->sondeaButton->setEnabled(true);
         ui->checkBoxAsyncMode->setEnabled(false);
+    }
+    else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_START_TEMP_SAMPLING])
+    {
+        ui->buttonTempStart->setDisabled(true);
+        ui->buttonTempStop->setEnabled(true);
+        ui->qwtTempPlot->setEnabled(true);
+        configureQwtPlot();
+    }
+    else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_STOP_TEMP_SAMPLING])
+    {
+        ui->buttonTempStart->setEnabled(true);
+        ui->buttonTempStop->setDisabled(true);
+        ui->qwtTempPlot->setDisabled(true);
     }
 
 }
@@ -327,6 +344,46 @@ void GUIPanel::processFromTopicBoardStatus(const QJsonObject &jsonData)
     }
 }
 
+void GUIPanel::configureQwtPlot()
+{
+    //Configuramos la grafica
+    ui->qwtTempPlot->setTitle("Temperature sensor");
+    ui->qwtTempPlot->setAxisTitle(QwtPlot::xBottom,"Sample");
+    ui->qwtTempPlot->setAxisTitle(QwtPlot::yLeft, "Cº");
+    //ui->qwtTempPlot->axisAutoScale(true); // Con Autoescala
+    ui->qwtTempPlot->setAxisScale(QwtPlot::yLeft, 0, 50); // Con escala definida
+    ui->qwtTempPlot->setAutoReplot(false);
+
+    //Creamos una curva y la añadimos a la grafica
+    m_curve_1 = new QwtPlotCurve();
+    m_curve_1->setPen(QPen(Qt::red));
+    m_Grid = new QwtPlotGrid();
+    m_Grid->attach(ui->qwtTempPlot);
+    m_curve_1->attach(ui->qwtTempPlot);
+
+    //Inicializadmos los datos que se muestran en la grafica
+    for (int i=0; i<NMAX; i++) {
+        yVal1[i]=0;
+        xVal[i]=i;
+    }
+    m_curve_1->setRawSamples(xVal,yVal1,NMAX);
+    ui->qwtTempPlot->replot();
+}
+
+void GUIPanel::processFromTopicTemp(const QJsonObject &jsonData)
+{
+    QJsonValue sample = jsonData["grades"];
+
+    if (sample.isDouble())
+    {
+        //Actualizamos gráfica correspondiente
+        memmove(yVal1,yVal1+1,sizeof(double)*(NMAX-1)); //Desplazamos las muestras hacia la izquierda
+        yVal1[NMAX-1] = sample.toDouble(); //Añadimos el último punto
+        m_curve_1->setRawSamples(xVal,yVal1,NMAX);  //Refrescamos..
+        ui->qwtTempPlot->replot();
+    }
+}
+
 
 void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
 {
@@ -358,6 +415,9 @@ void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
                 break;
             case BOARD_STATUS:
                 processFromTopicBoardStatus(objeto_json);
+                break;
+            case TEMP:
+                processFromTopicTemp(objeto_json);
                 break;
             default:
                 break;
@@ -429,10 +489,18 @@ void GUIPanel::SendMessageForPWMRGBLeds()
 
 // Generate json message of type command and publish
 // on COMMAND topic
-void GUIPanel::SendMessageCommand(const Commands &name)
+void GUIPanel::SendMessageCommand(const Commands &name, CommandParams* params)
 {
     QJsonObject jsonCmd;
     jsonCmd["cmd"] = topicCommandCmds[name];
+    // add params if this are available
+    if (params != nullptr)
+    {
+        for (auto pair : (*params))
+        {
+            jsonCmd[pair.first] = pair.second;
+        }
+    }
     QJsonDocument payload(jsonCmd);
     QMQTT::Message msg(0, topics[COMMAND], payload.toJson());
 
@@ -549,6 +617,27 @@ void GUIPanel::on_checkBoxAsyncMode_toggled(bool checked)
             // if checked -> change to async mode
             SendMessageCommand(MODE_PUSH_BUTTONS_ASYNC);
         }
+    }
+}
+
+
+void GUIPanel::on_buttonTempStart_clicked()
+{
+    double interval = ui->dsbTempSamplingInterval->value() * 1000;
+    CommandParams params = {{"interval", QString::number(interval)}};
+
+    if (connected)
+    {
+        SendMessageCommand(START_TEMP_SAMPLING, &params);
+    }
+}
+
+
+void GUIPanel::on_buttonTempStop_clicked()
+{
+    if (connected)
+    {
+        SendMessageCommand(STOP_TEMP_SAMPLING);
     }
 }
 

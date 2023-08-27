@@ -7,6 +7,11 @@
 
 #include "topic.h"
 
+#include <qwt_plot_curve.h>
+#include <qwt_plot_grid.h>
+
+#define NMAX 300
+
 namespace Ui {
 class GUIPanel;
 }
@@ -55,6 +60,10 @@ private slots:
 
     void on_checkBoxAsyncMode_toggled(bool checked);
 
+    void on_buttonTempStart_clicked();
+
+    void on_buttonTempStop_clicked();
+
 private: // funciones privadas
 //    void pingDevice();
     void startClient();
@@ -64,10 +73,11 @@ private: // funciones privadas
     // gui helper functions
     void disableBoardWidgetsInGUI();
     void enableBoardWidgetsInGUI();
+    void configureQwtPlot();
     // Functions to subscribe new messages on topics
     void SendMessageForGpioRGBLeds();
     void SendMessageForPWMRGBLeds();
-    void SendMessageCommand(const Commands &name);
+    void SendMessageCommand(const Commands &name, CommandParams* params = nullptr);
     // Functions to process incoming data on yopic by topic
     void processFromTopicCommand(const QJsonObject &jsonData);
     void processFromTopicGPIOLed(const QJsonObject &jsonData);
@@ -75,11 +85,17 @@ private: // funciones privadas
     void processFromTopicButtons(const QJsonObject &jsonData);
     void processFromTopicAdc(const QJsonObject &jsonData);
     void processFromTopicBoardStatus(const QJsonObject &jsonData);
+    void processFromTopicTemp(const QJsonObject &jsonData);
 private:
     Ui::GUIPanel *ui;
     int transactionCount;
     QMQTT::Client *_client;
     bool connected, isLedModePWM;   // if isLedModePWM == false -> mode is GPIO
+    // for graphic
+    double xVal[NMAX];
+    double yVal1[NMAX];
+    QwtPlotGrid  *m_Grid;
+    QwtPlotCurve *m_curve_1;
 };
 
 #endif // GUIPANEL_H
