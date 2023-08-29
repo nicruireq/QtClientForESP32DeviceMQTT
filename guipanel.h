@@ -10,11 +10,15 @@
 #include <qwt_plot_curve.h>
 #include <qwt_plot_grid.h>
 
+#include<QNetworkReply>
+
 #define NMAX 300
 
 namespace Ui {
 class GUIPanel;
 }
+
+class QNetworkAccessManager;//Add this class to create this class of objects in the future
 
 //QT4:QT_USE_NAMESPACE_SERIALPORT
 
@@ -64,6 +68,13 @@ private slots:
 
     void on_buttonTempStop_clicked();
 
+    // network features
+    void getWeatherData(QNetworkReply *);//Slot function for receiving network characters and passing characters to TextBrowser
+
+    void on_refreshButton_clicked();
+
+    void on_btnPublishWeather_clicked();
+
 private: // funciones privadas
 //    void pingDevice();
     void startClient();
@@ -78,6 +89,7 @@ private: // funciones privadas
     void SendMessageForGpioRGBLeds();
     void SendMessageForPWMRGBLeds();
     void SendMessageCommand(const Commands &name, CommandParams* params = nullptr);
+    void SendMessageWeather();
     // Functions to process incoming data on yopic by topic
     void processFromTopicCommand(const QJsonObject &jsonData);
     void processFromTopicGPIOLed(const QJsonObject &jsonData);
@@ -96,6 +108,7 @@ private:
     double yVal1[NMAX];
     QwtPlotGrid  *m_Grid;
     QwtPlotCurve *m_curve_1;
+    QNetworkAccessManager *manager;
 };
 
 #endif // GUIPANEL_H

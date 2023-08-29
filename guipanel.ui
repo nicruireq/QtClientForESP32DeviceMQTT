@@ -88,7 +88,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -560,6 +560,105 @@
      </property>
      <property name="autoReplot">
       <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_4">
+    <attribute name="title">
+     <string>Weather data</string>
+    </attribute>
+    <widget class="QPushButton" name="refreshButton">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>30</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Update</string>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="TextBrowser">
+     <property name="geometry">
+      <rect>
+       <x>520</x>
+       <y>30</y>
+       <width>411</width>
+       <height>271</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="cityLabel">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>30</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Spanish City:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cityList">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>30</y>
+       <width>161</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Jerez de la Frontera</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Malaga</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Cadiz</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sevilla</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Granada</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Barcelona</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Madrid</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QPushButton" name="btnPublishWeather">
+     <property name="geometry">
+      <rect>
+       <x>660</x>
+       <y>320</y>
+       <width>121</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Publish</string>
      </property>
     </widget>
    </widget>

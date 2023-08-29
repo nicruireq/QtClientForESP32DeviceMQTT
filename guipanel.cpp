@@ -6,6 +6,8 @@
 
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonParseError>
+#include <QJsonArray>
 
 // y que no estén incluidos en el interfaz gráfico. En este caso, la ventana de PopUp <QMessageBox>
 // que se muestra al recibir un PING de respuesta
@@ -24,6 +26,10 @@ GUIPanel::GUIPanel(QWidget *parent) :  // Constructor de la clase
 {
     ui->setupUi(this);                // Conecta la clase con su interfaz gráfico.
     setWindowTitle(tr("Interfaz de Control")); // Título de la ventana
+
+    manager = new QNetworkAccessManager(this);
+    //Associated slot. finished is a function that returns parameters when a connection under QNetworkAccessManager ends
+    connect(manager, &QNetworkAccessManager::finished, this, &GUIPanel::getWeatherData);
 
     _client=new QMQTT::Client(QHostAddress::LocalHost, 1883); //localhost y lo otro son valores por defecto
 
@@ -127,6 +133,14 @@ void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
         msgBox.setWindowTitle("PING response");
         msgBox.exec();
     }
+    else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[MODE_LEDS_PWM])
+    {
+        bool previousblockinstate = ui->radioBtnPWM->blockSignals(true);
+        if (!ui->radioBtnPWM->isChecked())
+            ui->radioBtnPWM->setChecked(true);
+        ui->radioBtnPWM->blockSignals(previousblockinstate);
+
+    }
     else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_MODE_LEDS_PWM])
     {
         // process response to change mode of leds to pwm
@@ -140,6 +154,13 @@ void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
         bool previousblockinstate = ui->radioBtnPWM->blockSignals(true);
         ui->radioBtnPWM->setChecked(true);
         ui->radioBtnPWM->blockSignals(previousblockinstate);
+    }
+    else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[MODE_LEDS_GPIO])
+    {
+        bool previousblockinstate = ui->radioBtnGPIO->blockSignals(true);
+        if (!ui->radioBtnGPIO->isChecked())
+            ui->radioBtnGPIO->setChecked(true);
+        ui->radioBtnGPIO->blockSignals(previousblockinstate);
     }
     else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_MODE_LEDS_GPIO])
     {
@@ -155,10 +176,24 @@ void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
         ui->radioBtnGPIO->setChecked(true);
         ui->radioBtnGPIO->blockSignals(previousblockinstate);
     }
+    else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[MODE_PUSH_BUTTONS_ASYNC])
+    {
+        // to keep clients synchronized
+        bool previousblockinstate = ui->checkBoxAsyncMode->blockSignals(true);
+        ui->checkBoxAsyncMode->setChecked(true);
+        ui->checkBoxAsyncMode->blockSignals(previousblockinstate);
+    }
     else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_MODE_PUSH_BUTTONS_ASYNC])
     {
         ui->sondeaButton->setDisabled(true);
         ui->checkBoxAsyncMode->setEnabled(true);
+    }
+    else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[MODE_PUSH_BUTTONS_POLL])
+    {
+        // to keep clients synchronized
+        bool previousblockinstate = ui->checkBoxAsyncMode->blockSignals(true);
+        ui->checkBoxAsyncMode->setChecked(false);
+        ui->checkBoxAsyncMode->blockSignals(previousblockinstate);
     }
     else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_MODE_PUSH_BUTTONS_POLL])
     {
@@ -508,6 +543,44 @@ void GUIPanel::SendMessageCommand(const Commands &name, CommandParams* params)
 }
 
 
+void GUIPanel::SendMessageWeather()
+{
+    QString dataString = ui->TextBrowser->toPlainText();
+
+    if (!dataString.isEmpty())
+    {
+        QJsonParseError jsonParseError;
+        QJsonDocument parsed = QJsonDocument::fromJson(dataString.toUtf8(), &jsonParseError);
+        if (!parsed.isNull())
+        {
+            // json data is is well formatted
+            QJsonObject originalJson = parsed.object();
+            QJsonObject jsonToSent;
+            QJsonObject jweather = originalJson["weather"].toArray().first().toObject();
+            QJsonObject jmain = originalJson["main"].toObject();
+            QJsonObject jwind = originalJson["wind"].toObject();
+            jsonToSent["description"] = jweather["description"];
+            jsonToSent["temp"] = jmain["temp"];
+            jsonToSent["feels_like"] = jmain["feels_like"];
+            jsonToSent["temp_min"] = jmain["temp_min"];
+            jsonToSent["temp_max"] = jmain["temp_max"];
+            // converts from m/s to km/h before, then conversion constructor of QJsonValue will be used
+            jsonToSent["wind_speed"] = jwind["speed"].toDouble() * 3.6;
+            jsonToSent["humidity"] = jmain["humidity"];
+            jsonToSent["city"] = originalJson["name"];
+
+            QJsonDocument finalJsonDoc(jsonToSent);
+            QMQTT::Message msg(0, topics[WEATHER], finalJsonDoc.toJson());
+            _client->publish(msg);
+        }
+        else
+        {
+            qDebug() << jsonParseError.errorString();
+        }
+    }
+}
+
+
 void GUIPanel::on_pingButton_clicked()
 {
     SendMessageCommand(PING);
@@ -638,6 +711,34 @@ void GUIPanel::on_buttonTempStop_clicked()
     if (connected)
     {
         SendMessageCommand(STOP_TEMP_SAMPLING);
+    }
+}
+
+
+void GUIPanel::getWeatherData(QNetworkReply *reply)
+{
+    //Read data from the receiving buffer
+    QByteArray buffer = reply->readAll();
+        //Transfer data to TextBrowser
+    ui->TextBrowser->setText(buffer);
+        //Release the object
+    reply->deleteLater();
+}
+
+
+void GUIPanel::on_refreshButton_clicked()
+{
+    QString currentCity = ui->cityList->currentText();
+    manager->get(QNetworkRequest(QString(tr("http://api.openweathermap.org/data/2.5/weather?q=%1,es&mode=json&units=metric&lang=sp&APPID=6b55db98c0b1a112f1f98bd93e4726ac")).arg(currentCity) ));
+    ui->TextBrowser->reload();
+}
+
+
+void GUIPanel::on_btnPublishWeather_clicked()
+{
+    if (connected)
+    {
+        SendMessageWeather();
     }
 }
 
