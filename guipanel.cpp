@@ -442,6 +442,41 @@ void GUIPanel::processFromTopicTemp(const QJsonObject &jsonData)
 }
 
 
+void GUIPanel::processFromTopicBLEInfo(const QJsonArray &jsonData)
+{
+    // clean list before add new data
+    while (ui->listBLEResults->count() > 0)
+    {
+        ui->listBLEResults->takeItem(0);
+    }
+    // add new data
+    for (const auto& device : jsonData)
+    {
+        if (device.isObject())
+        {
+            QJsonObject obj = device.toObject();
+            if (!obj.isEmpty())
+            {
+                QString deviceInfo;
+
+                QString name;
+                if (obj["name"].toString().isEmpty())
+                    name = "\"undefined\"";
+                else
+                    name = obj["name"].toString();
+
+                deviceInfo.append("Name: ")
+                    .append(name).append("    |   ")
+                    .append("Address: ").append(obj["address"].toString()).append("    |   ")
+                    .append("RSSI: ").append(QString::number(obj["RSSI"].toDouble()));
+
+                new QListWidgetItem(deviceInfo , ui->listBLEResults);
+            }
+        }
+    }
+}
+
+
 void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
 {
     if (connected)
@@ -449,10 +484,12 @@ void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
         QJsonParseError error;
         QJsonDocument mensaje=QJsonDocument::fromJson(message.payload(),&error);
 
-        if ((error.error==QJsonParseError::NoError)&&(mensaje.isObject()))
+        if ((error.error==QJsonParseError::NoError) &&
+            (mensaje.isObject() || mensaje.isArray() ) )
         { //Tengo que comprobar que el mensaje es del tipo adecuado y no hay errores de parseo...
 
-            QJsonObject objeto_json=mensaje.object();
+            QJsonObject objeto_json = mensaje.object();
+            QJsonArray array_json = mensaje.array();
 
             switch (mapTopicWithTag[message.topic()]) {
             case COMMAND:
@@ -476,10 +513,21 @@ void GUIPanel::onMQTT_Received(const QMQTT::Message &message)
             case TEMP:
                 processFromTopicTemp(objeto_json);
                 break;
+            case BLEINFO:
+                processFromTopicBLEInfo(array_json);
+                break;
             default:
                 break;
             }
         }   // data processing end
+        else
+        {
+            // show info of parsing error
+            QMessageBox msgBox;
+            msgBox.setText(error.errorString());
+            msgBox.setWindowTitle("JSON parsing error");
+            msgBox.exec();
+        }
     }
 }
 
