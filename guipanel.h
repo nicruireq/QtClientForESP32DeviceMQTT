@@ -75,6 +75,8 @@ private slots:
 
     void on_btnPublishWeather_clicked();
 
+    void on_btnBLEScan_clicked();
+
 private: // funciones privadas
 //    void pingDevice();
     void startClient();
@@ -85,6 +87,7 @@ private: // funciones privadas
     void disableBoardWidgetsInGUI();
     void enableBoardWidgetsInGUI();
     void configureQwtPlot();
+    void syncTempWidgets();
     // Functions to subscribe new messages on topics
     void SendMessageForGpioRGBLeds();
     void SendMessageForPWMRGBLeds();
@@ -103,6 +106,9 @@ private:
     int transactionCount;
     QMQTT::Client *_client;
     bool connected, isLedModePWM;   // if isLedModePWM == false -> mode is GPIO
+    bool isTempReadingsOn;  // save state of the start temp readings function
+                            // to solve a crash that becomes when another client
+                            // has started the temp readings before and incoming readings are coming
     // for graphic
     double xVal[NMAX];
     double yVal1[NMAX];

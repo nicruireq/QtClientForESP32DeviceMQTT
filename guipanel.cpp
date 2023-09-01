@@ -47,6 +47,9 @@ GUIPanel::GUIPanel(QWidget *parent) :  // Constructor de la clase
     // disable gui widgets for controlling board
     // while mqtt connection is not stablished
     disableBoardWidgetsInGUI();
+
+    // set temperature readings state
+    isTempReadingsOn = false;
 }
 
 GUIPanel::~GUIPanel() // Destructor de la clase
@@ -119,6 +122,14 @@ void GUIPanel::on_pushButton_clicked()
     ui->statusLabel->setText(tr(""));
 }
 
+
+void GUIPanel::syncTempWidgets()
+{
+    ui->buttonTempStart->setDisabled(true);
+    ui->buttonTempStop->setEnabled(true);
+    ui->qwtTempPlot->setEnabled(true);
+    configureQwtPlot();
+}
 
 void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
 {
@@ -202,16 +213,19 @@ void GUIPanel::processFromTopicCommand(const QJsonObject &jsonData)
     }
     else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_START_TEMP_SAMPLING])
     {
-        ui->buttonTempStart->setDisabled(true);
-        ui->buttonTempStop->setEnabled(true);
-        ui->qwtTempPlot->setEnabled(true);
-        configureQwtPlot();
+        syncTempWidgets();
+        isTempReadingsOn = true;
+//        ui->buttonTempStart->setDisabled(true);
+//        ui->buttonTempStop->setEnabled(true);
+//        ui->qwtTempPlot->setEnabled(true);
+//        configureQwtPlot();
     }
     else if (cmdResponse.isString() && cmdResponse.toString()==topicCommandCmds[ACK_STOP_TEMP_SAMPLING])
     {
         ui->buttonTempStart->setEnabled(true);
         ui->buttonTempStop->setDisabled(true);
         ui->qwtTempPlot->setDisabled(true);
+        isTempReadingsOn = false;
     }
 
 }
@@ -408,6 +422,14 @@ void GUIPanel::configureQwtPlot()
 void GUIPanel::processFromTopicTemp(const QJsonObject &jsonData)
 {
     QJsonValue sample = jsonData["grades"];
+
+    // if temp readings weren't started by this client
+    // synchronize widgets to set clean state
+    if (!isTempReadingsOn)
+    {
+        syncTempWidgets();
+        isTempReadingsOn = true;
+    }
 
     if (sample.isDouble())
     {
@@ -739,6 +761,15 @@ void GUIPanel::on_btnPublishWeather_clicked()
     if (connected)
     {
         SendMessageWeather();
+    }
+}
+
+
+void GUIPanel::on_btnBLEScan_clicked()
+{
+    if (connected)
+    {
+        SendMessageCommand(START_BLE_SCAN);
     }
 }
 

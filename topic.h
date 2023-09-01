@@ -15,7 +15,8 @@ typedef enum TopicName {
     ADC,
     BOARD_STATUS,
     TEMP,
-    WEATHER
+    WEATHER,
+    BLEINFO
 } TopicName;
 
 const QString BASE = "/mseei/imicro/nrr/";
@@ -27,7 +28,8 @@ const QString topics[] = {
     BASE + "ADC",
     BASE + "BOARD/STATUS",
     BASE + "TEMP",
-    BASE + "WEATHER"
+    BASE + "WEATHER",
+    BASE + "BLEINFO"
 };
 
 typedef enum Commands {
@@ -45,7 +47,8 @@ typedef enum Commands {
     START_TEMP_SAMPLING,
     ACK_START_TEMP_SAMPLING,
     STOP_TEMP_SAMPLING,
-    ACK_STOP_TEMP_SAMPLING
+    ACK_STOP_TEMP_SAMPLING,
+    START_BLE_SCAN
 } Commands;
 
 const QString topicCommandCmds[] = {
@@ -63,7 +66,8 @@ const QString topicCommandCmds[] = {
     "start_temp",
     "ack_start_temp",
     "stop_temp",
-    "ack_stop_temp"
+    "ack_stop_temp",
+    "ble_scan"
 };
 
 class CommandParams
